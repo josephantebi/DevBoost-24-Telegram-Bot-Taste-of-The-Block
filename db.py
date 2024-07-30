@@ -12,13 +12,13 @@ class RestaurantDB:
         self.restaurants.create_index("user_id", unique=True)
 
     def add_restaurant(self, restaurant: Restaurant):
+        menu_items = [dish.dict() for dish in restaurant.menu]
         self.restaurants.insert_one({
             "user_id": restaurant.user_id,
             "name": restaurant.name,
             "category": restaurant.category,
             "description": restaurant.description,
-            "menu": "json(restaurant.menu)"
+            "menu": menu_items
         })
         return self.restaurants.find_one({'user_id': restaurant.user_id})
-
 
