@@ -1,17 +1,24 @@
 from pymongo import MongoClient
 
+from entities.Dish import Dish
+from entities.Restaurant import Restaurant
 
-class ShoppingDB:
+
+class RestaurantDB:
     def __init__(self):
         self.client = MongoClient()
-        self.db = self.client.get_database("shopping_bot")
-        self.lists = self.db.get_collection("lists")
-        self.lists.create_index("chat_id", unique=True)
+        self.db = self.client.get_database("taste_of_the_block_bot")
+        self.restaurants = self.db.get_collection("restaurants")
+        self.restaurants.create_index("user_id", unique=True)
 
-    def add_item(self, chat_id: int, item: str):
-        self.lists.update_one({'chat_id': chat_id}, {
-            '$push': {"items": item}
-        }, upsert=True)
-        return self.lists.find_one({'chat_id': chat_id})['items']
+    def add_restaurant(self, restaurant: Restaurant):
+        self.restaurants.insert_one({
+            "user_id": restaurant.user_id,
+            "name": restaurant.name,
+            "category": restaurant.category,
+            "description": restaurant.description,
+            "menu": "json(restaurant.menu)"
+        })
+        return self.restaurants.find_one({'user_id': restaurant.user_id})
 
 
