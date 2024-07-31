@@ -94,7 +94,7 @@ def show_menu(call):
 @bot.message_handler(commands=['create_restaurant'])
 def create_restaurant(message):
     logger.info(f"= Creating restaurant: #{message.chat.id}/{message.from_user.username!r}")
-    msg = bot.reply_to(message, "Please choose a name for your restaurant.")
+    msg = bot.send_message(message.chat.id, "Please choose a name for your restaurant.")
     bot.register_next_step_handler(msg, restaurant_srevice.process_create_restaurant)
 
 
@@ -102,6 +102,21 @@ def create_restaurant(message):
 def edit_restaurant(message):
     logger.info(f"= Editing restaurant: #{message.chat.id}/{message.from_user.username!r}")
     restaurant_srevice.edit_restaurant(message)
+
+
+@bot.message_handler(commands=['remove_restaurant'])
+def remove_restaurant(message):
+    logger.info(f"= Editing restaurant: #{message.chat.id}/{message.from_user.username!r}")
+    restaurant_srevice.remove_restaurant(message)
+
+
+@bot.callback_query_handler(func=lambda call: call.data in ["confirm_delete_restaurant", "cancel_delete_restaurant"])
+def handle_delete_confirmation(call):
+    if call.data == "confirm_delete_restaurant":
+        restaurant_srevice.handle_confirm_delete_restaurant(call.message)
+    elif call.data == "cancel_delete_restaurant":
+        bot.send_message(call.message.chat.id, "Restaurant deletion canceled.")
+        logger.info(f"User {call.message.chat.id} canceled restaurant deletion.")
 
 
 @bot.callback_query_handler(func=lambda call: True)

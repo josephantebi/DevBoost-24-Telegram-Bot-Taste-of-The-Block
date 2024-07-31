@@ -53,3 +53,7 @@ class RestaurantDB:
         )
         return result.modified_count > 0
 
+    def remove_restaurant(self, user_id):
+        result = self.restaurants.delete_one({'user_id': user_id})
+        return result.deleted_count > 0
+
