@@ -21,4 +21,4 @@ def process_restaurant_category_step(message, restaurant):
     restaurant['category'] = message.text
     chat_id = message.chat.id
     res = restaurant_db.add_restaurant(restaurant)
-    bot.send_message(chat_id, f'Creating {res['name']} done :)')
+    bot.send_message(chat_id, f'Creating {res["name"]} done 😁')
