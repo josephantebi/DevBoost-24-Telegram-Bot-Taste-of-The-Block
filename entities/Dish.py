@@ -1,6 +1,14 @@
-class Dish:
-    def __init__(self, name, description, price):
-        self.price = price
-        self.description = description
-        self.name = name
+import pydantic
 
+
+class Dish(pydantic.BaseModel):
+    name: str
+    description: str
+    price: int
+
+    def to_dict(self):
+        return {
+            "name": self.name,
+            "description": self.description,
+            "price": self.price
+        }

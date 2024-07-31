@@ -1,6 +1,5 @@
 from pymongo import MongoClient
 
-from entities.Dish import Dish
 from entities.Restaurant import Restaurant
 
 
@@ -9,16 +8,15 @@ class RestaurantDB:
         self.client = MongoClient()
         self.db = self.client.get_database("taste_of_the_block_bot")
         self.restaurants = self.db.get_collection("restaurants")
-        self.restaurants.create_index("user_id", unique=True)
 
-    def add_restaurant(self, restaurant: Restaurant):
-        menu_items = [dish.dict() for dish in restaurant.menu]
-        self.restaurants.insert_one({
-            "user_id": restaurant.user_id,
-            "name": restaurant.name,
-            "category": restaurant.category,
-            "description": restaurant.description,
-            "menu": menu_items
-        })
-        return self.restaurants.find_one({'user_id': restaurant.user_id})
+    def add_restaurant(self, restaurant: dict):
+        new_res = {
+            'user_id': restaurant.get("user_id"),
+            'name': restaurant.get("name"),
+            'description': restaurant.get("description"),
+            'category': restaurant.get("category"),
+            'menu': restaurant.get("menu", [])
+        }
+        self.restaurants.insert_one(new_res)
+        return self.restaurants.find_one({'user_id': restaurant.get("user_id")})
 

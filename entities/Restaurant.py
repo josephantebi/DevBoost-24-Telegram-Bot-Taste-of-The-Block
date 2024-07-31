@@ -1,12 +1,6 @@
 import pydantic
 
-
-# from entities.Dish import Dish
-
-class Dish(pydantic.BaseModel):
-    name: str
-    description: str
-    price: int
+from entities.Dish import Dish
 
 
 class Restaurant(pydantic.BaseModel):
@@ -16,14 +10,12 @@ class Restaurant(pydantic.BaseModel):
     user_id: int
     menu: list[Dish]
 
+    def to_dict(self):
+        return {
+            "user_id": self.user_id,
+            "name": self.name,
+            "category": self.category,
+            "description": self.description,
+            "menu": [dish.to_dict() for dish in self.menu]
+        }
 
-class TasteOfTheBlock(pydantic.BaseModel):
-    restaurants: list[Restaurant]
-
-
-# class Restaurant:
-#     def __init__(self, user_id, name, description):
-#         self.user_id = user_id
-#         self.name = name
-#         self.description = description
-#         self.dishes = "list(Dish)"

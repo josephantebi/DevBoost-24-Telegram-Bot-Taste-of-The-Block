@@ -1,7 +1,6 @@
 import json
-from pprint import pprint
 
-from entities.Restaurant import TasteOfTheBlock
+from entities.TasteOfTheBlock import TasteOfTheBlock
 
 
 def generate_from_json(file):

@@ -1,22 +1,13 @@
-import logging
-from pprint import pprint
 import telebot
 from telebot import types
 
-import bot_secrets
-from db import RestaurantDB
-from utilities.generate import generate_from_json
+from shared.shared_resource import shared_resource
+from service import restaurant_srevice, load_demo_restaurants
 
-logging.basicConfig(
-    format="[%(levelname)s %(asctime)s %(module)s:%(lineno)d] %(message)s",
-    level=logging.INFO,
-)
+logger = shared_resource.get_logger()
+restaurant_db = shared_resource.get_restaurant_db()
+bot = shared_resource.get_bot()
 
-logger = logging.getLogger(__name__)
-
-bot = telebot.TeleBot(bot_secrets.BOT_TOKEN)
-
-restaurant_db = RestaurantDB()
 
 bot.set_my_commands([
     telebot.types.BotCommand("/create_restaurant", "Create a new restaurant"),
@@ -46,15 +37,13 @@ These commands will help you:
 
 @bot.message_handler(commands=['load_demo'])
 def load_demo(message):
-    taste_of_the_block = generate_from_json("restaurants.json")
-    for res in taste_of_the_block.restaurants:
-        pprint(res)
-        restaurant_db.add_restaurant(res)
+    load_demo_restaurants.load_demo()
     bot.send_message(message.chat.id, "Demo data loaded successfully.")
 
 
 @bot.message_handler(commands=['show_restaurants'])
 def show_restaurants(message):
+    #TODO: What if there is no restaurants ?
     restaurants = restaurant_db.restaurants.find()
     for restaurant in restaurants:
         restaurant_info = f"Restaurant name: {restaurant['name']}\n\n" \
@@ -96,17 +85,12 @@ def show_menu(call):
 
 @bot.message_handler(commands=['create_restaurant'])
 def create_restaurant(message):
-    bot.send_message(message.chat.id, "Please choose a name for your restaurant.")
     logger.info(f"= Creating restaurant: #{message.chat.id}/{message.from_user.username!r}")
+    msg = bot.reply_to(message, "Please choose a name for your restaurant.")
+    new_restaurant = {'user_id': message.chat.id}
+    bot.register_next_step_handler(msg, restaurant_srevice.process_restaurant_name_step, new_restaurant)
 
 
-@bot.message_handler(func=lambda message: True)
-def echo_message(message: telebot.types.Message):
-    chat_id = message.chat.id
-    username = message.from_user.username
-    text = message.text
-    logger.info(f"= Add item: #{chat_id}/{username!r}: {text!r}")
-    bot.send_message(chat_id, str(message))
 
 logger.info("* Start polling...")
 bot.infinity_polling()
