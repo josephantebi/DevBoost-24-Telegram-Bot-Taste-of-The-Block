@@ -46,3 +46,10 @@ class RestaurantDB:
         else:
             raise ValueError("Restaurant not found for the given user_id.")
 
+    def update_restaurant(self, user_id, updates: dict):
+        result = self.restaurants.update_one(
+            {'user_id': user_id},
+            {'$set': updates}
+        )
+        return result.modified_count > 0
+

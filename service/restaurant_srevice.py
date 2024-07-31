@@ -48,6 +48,18 @@ def show_restaurants():
 
 def edit_restaurant(message):
     keyboard = types.InlineKeyboardMarkup()
+    edit_restaurant_name = types.InlineKeyboardButton(
+        text="Edit restaurant name",
+        callback_data="edit_restaurant_name"
+    )
+    edit_restaurant_des = types.InlineKeyboardButton(
+        text="Edit restaurant description",
+        callback_data="edit_restaurant_des"
+    )
+    edit_restaurant_category = types.InlineKeyboardButton(
+        text="Edit restaurant category",
+        callback_data="edit_restaurant_category"
+    )
     add_dish_button = types.InlineKeyboardButton(
         text="Add new dish",
         callback_data="add_dish"
@@ -56,6 +68,9 @@ def edit_restaurant(message):
         text="Edit a dish",
         callback_data="edit_dish"
     )
+    keyboard.add(edit_restaurant_name)
+    keyboard.add(edit_restaurant_des)
+    keyboard.add(edit_restaurant_category)
     keyboard.add(add_dish_button)
     keyboard.add(edit_dish_button)
 
@@ -94,3 +109,31 @@ def process_dish_price_step(message, dish):
     res = restaurant_db.add_dish(chat_id, dish)
     logger.info(f"=Done inserting dish {dish['name']} #{message.chat.id}/{message.from_user.username!r}")
     bot.send_message(chat_id, f'Adding dish {res["name"]} done :)')
+
+
+def handle_edit_dish(message):
+    return None
+
+
+def process_edit_restaurant(message, filed):
+    new_value = message.text
+    chat_id = message.chat.id
+    result = restaurant_db.update_restaurant(chat_id, {filed: new_value})
+    if result:
+        bot.send_message(chat_id, "Done editing restaurant")
+
+
+def handle_edit_restaurant_name(message):
+    msg = bot.send_message(message.chat.id, "Please enter the new name for the restaurant.")
+    bot.register_next_step_handler(msg, process_edit_restaurant, 'name')
+
+
+def handle_edit_restaurant_des(message):
+    msg = bot.send_message(message.chat.id, "Please enter the new description for the restaurant.")
+    bot.register_next_step_handler(msg, process_edit_restaurant, 'description')
+
+
+def handle_edit_restaurant_category(message):
+    msg = bot.send_message(message.chat.id, "Please enter the new category for the restaurant.")
+    bot.register_next_step_handler(msg, process_edit_restaurant, 'category')
+

@@ -106,10 +106,16 @@ def edit_restaurant(message):
 
 @bot.callback_query_handler(func=lambda call: True)
 def handle_option(call):
-    if call.data == "add_dish":
+    if call.data == "edit_restaurant_name":
+        restaurant_srevice.handle_edit_restaurant_name(message=call.message)
+    elif call.data == "edit_restaurant_des":
+        restaurant_srevice.handle_edit_restaurant_des(message=call.message)
+    elif call.data == "edit_restaurant_category":
+        restaurant_srevice.handle_edit_restaurant_category(message=call.message)
+    elif call.data == "add_dish":
         restaurant_srevice.handle_add_dish(message=call.message)
     elif call.data == "edit_dish":
-        pass
+        restaurant_srevice.handle_edit_dish(message=call.message)
 
 
 logger.info("* Start polling...")
