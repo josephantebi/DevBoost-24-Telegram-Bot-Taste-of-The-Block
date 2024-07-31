@@ -1,10 +1,17 @@
+import logging
+
 import telebot
 from telebot import types
 
 from shared.shared_resource import shared_resource
 from service import restaurant_srevice, load_demo_restaurants
 
-logger = shared_resource.get_logger()
+logging.basicConfig(
+    format="[%(levelname)s %(asctime)s %(module)s:%(lineno)d] %(message)s",
+    level=logging.INFO,
+)
+logger = logging.getLogger(__name__)
+
 restaurant_db = shared_resource.get_restaurant_db()
 bot = shared_resource.get_bot()
 
@@ -44,7 +51,7 @@ def load_demo(message):
 @bot.message_handler(commands=['show_restaurants'])
 def show_restaurants(message):
     #TODO: What if there is no restaurants ?
-    restaurants = restaurant_db.restaurants.find()
+    restaurants = restaurant_db.find_all()
     for restaurant in restaurants:
         restaurant_info = f"Restaurant name: {restaurant['name']}\n\n" \
                           f"{restaurant['description']}\n\n" \
@@ -58,6 +65,7 @@ def show_restaurants(message):
         keyboard.add(menu_button)
 
         bot.send_message(message.chat.id, restaurant_info, reply_markup=keyboard)
+
 
 
 @bot.callback_query_handler(func=lambda call: call.data.startswith("menu_"))
@@ -87,9 +95,21 @@ def show_menu(call):
 def create_restaurant(message):
     logger.info(f"= Creating restaurant: #{message.chat.id}/{message.from_user.username!r}")
     msg = bot.reply_to(message, "Please choose a name for your restaurant.")
-    new_restaurant = {'user_id': message.chat.id}
-    bot.register_next_step_handler(msg, restaurant_srevice.process_restaurant_name_step, new_restaurant)
+    bot.register_next_step_handler(msg, restaurant_srevice.process_create_restaurant)
 
+
+@bot.message_handler(commands=['edit_restaurant'])
+def edit_restaurant(message):
+    logger.info(f"= Editing restaurant: #{message.chat.id}/{message.from_user.username!r}")
+    restaurant_srevice.edit_restaurant(message)
+
+
+@bot.callback_query_handler(func=lambda call: True)
+def handle_option(call):
+    if call.data == "add_dish":
+        restaurant_srevice.handle_add_dish(message=call.message)
+    elif call.data == "edit_dish":
+        pass
 
 
 logger.info("* Start polling...")

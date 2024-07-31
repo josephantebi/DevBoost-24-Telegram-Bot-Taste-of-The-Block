@@ -9,7 +9,7 @@ class RestaurantDB:
         self.db = self.client.get_database("taste_of_the_block_bot")
         self.restaurants = self.db.get_collection("restaurants")
 
-    def add_restaurant(self, restaurant: dict):
+    def add(self, restaurant: dict):
         new_res = {
             'user_id': restaurant.get("user_id"),
             'name': restaurant.get("name"),
@@ -19,4 +19,30 @@ class RestaurantDB:
         }
         self.restaurants.insert_one(new_res)
         return self.restaurants.find_one({'user_id': restaurant.get("user_id")})
+
+    def find_all(self):
+        return self.restaurants.find()
+
+    def add_dish(self, user_id, dish: dict):
+        new_dish = {
+            'name': dish.get("name"),
+            'description': dish.get("description"),
+            'price': dish.get("price")
+        }
+        restaurant = self.restaurants.find_one({'user_id': user_id})
+
+        if restaurant:
+            restaurant['menu'].append(new_dish)
+
+            result = self.restaurants.update_one(
+                {'user_id': user_id},
+                {'$set': {'menu': restaurant['menu']}}
+            )
+
+            if result.modified_count > 0:
+                return new_dish
+            else:
+                raise Exception("Failed to update restaurant with new dish.")
+        else:
+            raise ValueError("Restaurant not found for the given user_id.")
 
