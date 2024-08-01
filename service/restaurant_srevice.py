@@ -62,11 +62,11 @@ def edit_restaurant(message):
     )
     add_dish_button = types.InlineKeyboardButton(
         text="Add new dish",
-        callback_data="add_dish"
+        callback_data="add_dish_to_restaurant"
     )
     edit_dish_button = types.InlineKeyboardButton(
         text="Edit a dish",
-        callback_data="edit_dish"
+        callback_data="edit_dish_in_restaurant"
     )
     keyboard.add(edit_restaurant_name)
     keyboard.add(edit_restaurant_des)
