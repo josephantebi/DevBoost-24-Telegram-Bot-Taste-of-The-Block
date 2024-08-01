@@ -18,7 +18,6 @@ restaurant_db = shared_resource.get_restaurant_db()
 cart_db = CartsDB()
 bot = shared_resource.get_bot()
 
-
 bot.set_my_commands([
     telebot.types.BotCommand("/create_restaurant", "Create a new restaurant"),
     telebot.types.BotCommand("/edit_restaurant", "Edit your restaurant"),
@@ -92,7 +91,8 @@ def show_menu(call):
 
         for dish in restaurant['menu']:
             keyboard = types.InlineKeyboardMarkup()
-            send_pic(call.message, dish['photo'])
+            if 'photo' in dish:
+                send_pic(call.message, dish['photo'])
             dish_info = f"Dish name: {dish['name']}\n\n" \
                         f"{dish['description']}\n\n" \
                         f"Price: {dish['price']}"
@@ -102,6 +102,8 @@ def show_menu(call):
             )
             keyboard.row(menu_button)
             bot.send_message(call.message.chat.id, dish_info, reply_markup=keyboard)
+            bot.send_message(call.message.chat.id, "Thank you for visiting our restaurant, hope to see soon 🤩")
+
     else:
         bot.send_message(call.message.chat.id, "No dishes available for this restaurant.")
 
@@ -180,6 +182,7 @@ def show_cart(message):
 
     summary_message = f"The cart contains {total_quantity} items with a total price of {total_sum}."
     bot.send_message(message.chat.id, summary_message)
+
 
 @bot.callback_query_handler(
     func=lambda call: call.data.startswith(("add_dish_to_cart|", "remove_dish_from_cart|", "delete_dish_from_cart|"))
@@ -278,18 +281,18 @@ def remove_restaurant(message):
     restaurant_srevice.remove_restaurant(message)
 
 
+# @bot.callback_query_handler(func=lambda call: True)
+# def handle_delete_confirmation(call):
+#     if call.data == "confirm_delete_restaurant":
+#         restaurant_srevice.handle_confirm_delete_restaurant(call.message)
+#     elif call.data == "cancel_delete_restaurant":
+#         bot.send_message(call.message.chat.id, "Restaurant deletion canceled.")
+#         logger.info(f"User {call.message.chat.id} canceled restaurant deletion.")
+
+
 @bot.callback_query_handler(func=lambda call: True)
-def handle_delete_confirmation(call):
-    if call.data == "confirm_delete_restaurant":
-        restaurant_srevice.handle_confirm_delete_restaurant(call.message)
-    elif call.data == "cancel_delete_restaurant":
-        bot.send_message(call.message.chat.id, "Restaurant deletion canceled.")
-        logger.info(f"User {call.message.chat.id} canceled restaurant deletion.")
-
-
-@bot.callback_query_handler(func=lambda call: call.data.startswith(("edit_restaurant_name", "edit_restaurant_des", "edit_restaurant_category", "add_dish_to_restaurant", "edit_dish_in_restaurant")))
 def handle_option(call):
-    print(11111)
+    print(edit_restaurant)
     if call.data == "edit_restaurant_name":
         restaurant_srevice.handle_edit_restaurant_name(message=call.message)
     elif call.data == "edit_restaurant_des":
@@ -300,6 +303,11 @@ def handle_option(call):
         restaurant_srevice.handle_add_dish(call.message)
     elif call.data == "edit_dish_in_restaurant":
         restaurant_srevice.handle_edit_dish(call.message)
+    if call.data == "confirm_delete_restaurant":
+        restaurant_srevice.handle_confirm_delete_restaurant(call.message)
+    elif call.data == "cancel_delete_restaurant":
+        bot.send_message(call.message.chat.id, "Restaurant deletion canceled.")
+        logger.info(f"User {call.message.chat.id} canceled restaurant deletion.")
 
 
 logger.info("* Start polling...")

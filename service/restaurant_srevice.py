@@ -47,7 +47,6 @@ def process_restaurant_category_step(message, restaurant, message_id):
     bot.delete_message(chat_id=message.chat.id, message_id=message.id)
 
 
-
 def edit_restaurant(message):
     keyboard = types.InlineKeyboardMarkup()
     edit_restaurant_name = types.InlineKeyboardButton(
