@@ -127,13 +127,16 @@ def add_to_cart(call):
         user_cart = cart_db.carts.find_one({'user_id': call.from_user.id})
         if user_cart:
             cart = user_cart['cart']
-            if dish_name in cart:
-                cart[dish_name]['quantity'] += 1
+            restaurant_key = str(restaurant_id)  # Convert restaurant_id to string
+            if restaurant_key not in cart:
+                cart[restaurant_key] = {}
+            if dish_name in cart[restaurant_key]:
+                cart[restaurant_key][dish_name]['quantity'] += 1
             else:
-                cart[dish_name] = {'dish': dish, 'quantity': 1}
+                cart[restaurant_key][dish_name] = {'dish': dish, 'quantity': 1}
             cart_db.carts.update_one({'user_id': call.from_user.id}, {"$set": {'cart': cart}})
         else:
-            cart = {dish_name: {'dish': dish, 'quantity': 1}}
+            cart = {str(restaurant_id): {dish_name: {'dish': dish, 'quantity': 1}}}
             cart_db.carts.insert_one({'user_id': call.from_user.id, 'cart': cart})
 
         bot.send_message(call.message.chat.id, f"Added {dish['name']} to your cart.")
@@ -152,20 +155,107 @@ def show_cart(message):
     total_quantity = 0
     total_sum = 0
 
-    for dish_name, item in cart.items():
-        dish = item['dish']
-        quantity = item['quantity']
-        total_price = quantity * dish['price']
-        total_quantity += quantity
-        total_sum += total_price
-        cart_info = f"Dish name: {dish['name']}\n" \
-                    f"Dish Price: {dish['price']}\n" \
-                    f"Quantity: {quantity}\n" \
-                    f"Total price: {total_price}"
-        bot.send_message(message.chat.id, cart_info)
+    for restaurant_id, dishes in cart.items():
+        for dish_name, item in dishes.items():
+            dish = item['dish']
+            quantity = item['quantity']
+            total_price = quantity * dish['price']
+            total_quantity += quantity
+            total_sum += total_price
+            cart_info = f"Dish name: {dish['name']}\n" \
+                        f"Dish Price: {dish['price']}\n" \
+                        f"Quantity: {quantity}\n" \
+                        f"Total price: {total_price}"
+
+            keyboard = types.InlineKeyboardMarkup()
+            add_button = types.InlineKeyboardButton(text="+",
+                                                    callback_data=f"add_dish_to_cart|{restaurant_id}|{dish_name}")
+            remove_button = types.InlineKeyboardButton(text="-",
+                                                       callback_data=f"remove_dish_from_cart|{restaurant_id}|{dish_name}")
+            delete_button = types.InlineKeyboardButton(text="Delete",
+                                                       callback_data=f"delete_dish_from_cart|{restaurant_id}|{dish_name}")
+            keyboard.add(add_button, remove_button, delete_button)
+
+            bot.send_message(message.chat.id, cart_info, reply_markup=keyboard)
 
     summary_message = f"The cart contains {total_quantity} items with a total price of {total_sum}."
     bot.send_message(message.chat.id, summary_message)
+
+@bot.callback_query_handler(
+    func=lambda call: call.data.startswith(("add_dish_to_cart|", "remove_dish_from_cart|", "delete_dish_from_cart|"))
+)
+def edit_cart(call):
+    action, restaurant_id, dish_name = call.data.split("|", 2)
+    user_id = call.from_user.id
+    restaurant_id = int(restaurant_id)
+
+    user_cart = cart_db.carts.find_one({'user_id': user_id})
+    if not user_cart:
+        bot.send_message(call.message.chat.id, "Cart not found.")
+        return
+
+    cart = user_cart.get('cart', {})
+    restaurant_key = str(restaurant_id)
+    if restaurant_key not in cart or dish_name not in cart[restaurant_key]:
+        bot.send_message(call.message.chat.id, "Dish not found in cart.")
+        return
+
+    if action == "add_dish_to_cart":
+        cart[restaurant_key][dish_name]['quantity'] += 1
+    elif action == "remove_dish_from_cart":
+        if cart[restaurant_key][dish_name]['quantity'] > 1:
+            cart[restaurant_key][dish_name]['quantity'] -= 1
+        else:
+            del cart[restaurant_key][dish_name]
+            if not cart[restaurant_key]:
+                del cart[restaurant_key]
+    elif action == "delete_dish_from_cart":
+        del cart[restaurant_key][dish_name]
+        if not cart[restaurant_key]:
+            del cart[restaurant_key]
+
+    cart_db.carts.update_one({'user_id': user_id}, {"$set": {'cart': cart}})
+    bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
+    show_cart_with_user_id(call.message.chat.id)
+
+
+def show_cart_with_user_id(user_id):
+    user_cart = cart_db.carts.find_one({'user_id': user_id})
+    if not user_cart:
+        bot.send_message(user_id, "No cart available. Please add items to the cart and try again.")
+        return
+
+    cart = user_cart.get('cart', {})
+    total_quantity = 0
+    total_sum = 0
+
+    for restaurant_id, dishes in cart.items():
+        for dish_name, item in dishes.items():
+            if 'dish' not in item:
+                continue
+            dish = item['dish']
+            quantity = item['quantity']
+            total_price = quantity * dish['price']
+            total_quantity += quantity
+            total_sum += total_price
+            cart_info = f"Dish name: {dish['name']}\n" \
+                        f"Dish Price: {dish['price']}\n" \
+                        f"Quantity: {quantity}\n" \
+                        f"Total price: {total_price}"
+
+            keyboard = types.InlineKeyboardMarkup()
+            add_button = types.InlineKeyboardButton(text="+",
+                                                    callback_data=f"add_dish_to_cart|{restaurant_id}|{dish_name}")
+            remove_button = types.InlineKeyboardButton(text="-",
+                                                       callback_data=f"remove_dish_from_cart|{restaurant_id}|{dish_name}")
+            delete_button = types.InlineKeyboardButton(text="Delete",
+                                                       callback_data=f"delete_dish_from_cart|{restaurant_id}|{dish_name}")
+            keyboard.add(add_button, remove_button, delete_button)
+
+            bot.send_message(user_id, cart_info, reply_markup=keyboard)
+
+    summary_message = f"The cart contains {total_quantity} items with a total price of {total_sum}."
+    bot.send_message(user_id, summary_message)
 
 
 @bot.message_handler(commands=['create_restaurant'])
@@ -188,7 +278,7 @@ def remove_restaurant(message):
     restaurant_srevice.remove_restaurant(message)
 
 
-@bot.callback_query_handler(func=lambda call: call.data in ["confirm_delete_restaurant", "cancel_delete_restaurant"])
+@bot.callback_query_handler(func=lambda call: True)
 def handle_delete_confirmation(call):
     if call.data == "confirm_delete_restaurant":
         restaurant_srevice.handle_confirm_delete_restaurant(call.message)
@@ -197,18 +287,20 @@ def handle_delete_confirmation(call):
         logger.info(f"User {call.message.chat.id} canceled restaurant deletion.")
 
 
-@bot.callback_query_handler(func=lambda call: True)
+@bot.callback_query_handler(func=lambda call: call.data.startswith(("edit_restaurant_name", "edit_restaurant_des", "edit_restaurant_category", "add_dish_to_restaurant", "edit_dish_in_restaurant")))
 def handle_option(call):
+    print(11111)
     if call.data == "edit_restaurant_name":
         restaurant_srevice.handle_edit_restaurant_name(message=call.message)
     elif call.data == "edit_restaurant_des":
         restaurant_srevice.handle_edit_restaurant_des(message=call.message)
     elif call.data == "edit_restaurant_category":
         restaurant_srevice.handle_edit_restaurant_category(message=call.message)
-    elif call.data == "add_dish":
-        restaurant_srevice.handle_add_dish(message=call.message)
-    elif call.data == "edit_dish":
-        restaurant_srevice.handle_edit_dish(message=call.message)
+    elif call.data == "add_dish_to_restaurant":
+        restaurant_srevice.handle_add_dish(call.message)
+    elif call.data == "edit_dish_in_restaurant":
+        restaurant_srevice.handle_edit_dish(call.message)
+
 
 logger.info("* Start polling...")
 bot.infinity_polling()
