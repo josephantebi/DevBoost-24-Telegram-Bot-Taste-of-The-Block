@@ -15,36 +15,37 @@ restaurant_db = shared_resource.get_restaurant_db()
 bot = shared_resource.get_bot()
 
 
-def process_create_restaurant(message):
+def process_create_restaurant(message, message_id):
     new_restaurant = {'user_id': message.chat.id}
-    return process_restaurant_name_step(message, new_restaurant)
+    return process_restaurant_name_step(message, new_restaurant, message_id)
 
 
-def process_restaurant_name_step(message, restaurant):
+def process_restaurant_name_step(message, restaurant, message_id):
     logger.info(f"=Inserting restaurant name: {message.text} #{message.chat.id}/{message.from_user.username!r}")
     restaurant['name'] = message.text
-    msg = bot.send_message(message.chat.id, 'Please provide some description for your restaurant.')
-    bot.register_next_step_handler(msg, process_restaurant_description_step, restaurant)
+    msg = bot.edit_message_text('Please provide some description for your restaurant.', chat_id=message.chat.id, message_id=message_id)
+    bot.delete_message(chat_id=message.chat.id, message_id=message.id)
+    bot.register_next_step_handler(msg, process_restaurant_description_step, restaurant, message_id)
 
 
-def process_restaurant_description_step(message, restaurant):
+def process_restaurant_description_step(message, restaurant, message_id):
     logger.info(f"=Inserting restaurant description: {message.text} #{message.chat.id}/{message.from_user.username!r}")
     restaurant['description'] = message.text
-    msg = bot.send_message(message.chat.id, 'What is the category of your restaurant.')
-    bot.register_next_step_handler(msg, process_restaurant_category_step, restaurant)
+    msg = bot.edit_message_text('What is the category of your restaurant.', chat_id=message.chat.id,
+                                message_id=message_id)
+    bot.delete_message(chat_id=message.chat.id, message_id=message.id)
+    bot.register_next_step_handler(msg, process_restaurant_category_step, restaurant, message_id)
 
 
-def process_restaurant_category_step(message, restaurant):
+def process_restaurant_category_step(message, restaurant, message_id):
     logger.info(f"=Inserting restaurant category: {message.text} #{message.chat.id}/{message.from_user.username!r}")
     restaurant['category'] = message.text
-    chat_id = message.chat.id
     res = restaurant_db.add(Restaurant.from_dict(restaurant))
     logger.info(f"=Done inserting restaurant {restaurant['name']} #{message.chat.id}/{message.from_user.username!r}")
-    bot.send_message(chat_id, f'Creating {res["name"]} done 😁')
+    msg = bot.edit_message_text(f'Creating {res["name"]} done 😁', chat_id=message.chat.id,
+                                message_id=message_id)
+    bot.delete_message(chat_id=message.chat.id, message_id=message.id)
 
-
-def show_restaurants():
-    pass
 
 
 def edit_restaurant(message):

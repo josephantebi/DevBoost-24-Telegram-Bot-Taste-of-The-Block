@@ -172,7 +172,8 @@ def show_cart(message):
 def create_restaurant(message):
     logger.info(f"= Creating restaurant: #{message.chat.id}/{message.from_user.username!r}")
     msg = bot.send_message(message.chat.id, "Please choose a name for your restaurant.")
-    bot.register_next_step_handler(msg, restaurant_srevice.process_create_restaurant)
+    print(msg)
+    bot.register_next_step_handler(msg, restaurant_srevice.process_create_restaurant, msg.message_id)
 
 
 @bot.message_handler(commands=['edit_restaurant'])
