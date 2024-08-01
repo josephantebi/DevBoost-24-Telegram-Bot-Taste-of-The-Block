@@ -9,17 +9,20 @@
         {
           "name": "Harvest Salad",
           "description": "A mix of fresh greens, roasted root vegetables, quinoa, and a citrus vinaigrette.",
-          "price": 12
+          "price": 12,
+          "photo": "./images/Fall-Harvest-Salad-1.jpg"
         },
         {
           "name": "Grilled Vegetable Panini",
           "description": "Sourdough bread filled with grilled zucchini, bell peppers, mozzarella, and basil pesto.",
-          "price": 10
+          "price": 10,
+          "photo": "./images/grilled_vegetable_panini.jpg"
         },
         {
           "name": "Lentil Stew",
           "description": "Hearty lentil stew with tomatoes, carrots, and a blend of aromatic spices.",
-          "price": 14
+          "price": 14,
+          "photo": "./images/lentil_stew.jpg"
         }
       ]
     },
@@ -32,17 +35,20 @@
         {
           "name": "Seaside Paella",
           "description": "A traditional Spanish paella with shrimp, mussels, calamari, and saffron rice.",
-          "price": 22
+          "price": 22,
+          "photo": "./images/seaside_paella.jpg"
         },
         {
           "name": "Lobster Bisque",
           "description": "Creamy bisque made with fresh lobster, sherry, and a hint of cayenne pepper.",
-          "price": 18
+          "price": 18,
+          "photo": "./images/lobster_bisque.jpg"
         },
         {
           "name": "Grilled Mahi-Mahi",
           "description": "Mahi-mahi fillet grilled to perfection, served with mango salsa and jasmine rice.",
-          "price": 20
+          "price": 20,
+          "photo": "./images/grilled_mahi_mahi.jpg"
         }
       ]
     },
@@ -55,22 +61,26 @@
         {
           "name": "Mango Chicken Curry",
           "description": "Tender chicken pieces in a creamy mango and coconut curry sauce, served with basmati rice.",
-          "price": 15
+          "price": 15,
+          "photo": "./images/mango_chicken_curry.jpeg"
         },
         {
           "name": "Pad Thai",
           "description": "Stir-fried rice noodles with shrimp, tofu, bean sprouts, and a tamarind sauce.",
-          "price": 13
+          "price": 13,
+          "photo": "./images/pad_thai.jpg"
         },
         {
           "name": "Bali Satay",
           "description": "Grilled chicken skewers marinated in a blend of Indonesian spices, served with peanut sauce.",
-          "price": 12
+          "price": 12,
+          "photo": "./images/bali_satay.jpg"
         },
         {
           "name": "Coconut Shrimp Soup",
           "description": "A fragrant soup with coconut milk, shrimp, lemongrass, and galangal.",
-          "price": 9
+          "price": 9,
+          "photo": "./images/coconut_shrimp_soup.jpg"
         }
       ]
     },
@@ -83,22 +93,26 @@
         {
           "name": "Tagliatelle Bolognese",
           "description": "Fresh tagliatelle pasta with a rich and hearty Bolognese sauce.",
-          "price": 16
+          "price": 16,
+          "photo": "./images/tagliatelle_bolognese.jpg"
         },
         {
           "name": "Mushroom Risotto",
           "description": "Creamy Arborio rice with porcini mushrooms, Parmesan, and truffle oil.",
-          "price": 18
+          "price": 18,
+          "photo": "./images/mushroom_risotto.jpg"
         },
         {
           "name": "Caprese Salad",
           "description": "Fresh mozzarella, vine-ripened tomatoes, basil, and a drizzle of balsamic reduction.",
-          "price": 10
+          "price": 10,
+          "photo": "./images/caprese_salad.jpg"
         },
         {
           "name": "Tiramisu",
           "description": "Classic Italian dessert with layers of mascarpone cream, coffee-soaked ladyfingers, and cocoa powder.",
-          "price": 7
+          "price": 7,
+          "photo": "./images/tiramisu.jpg"
         }
       ]
     },
@@ -111,17 +125,20 @@
         {
           "name": "Ribeye Steak",
           "description": "12 oz. ribeye grilled to your liking, served with garlic mashed potatoes and seasonal vegetables.",
-          "price": 28
+          "price": 28,
+          "photo": "./images/ribeye_steak.jpg"
         },
         {
           "name": "Truffle Fries",
           "description": "Crispy fries tossed in truffle oil and Parmesan cheese.",
-          "price": 7
+          "price": 7,
+          "photo": "./images/truffle_fries.jpg"
         },
         {
           "name": "Grilled Asparagus",
           "description": "Fresh asparagus spears grilled and topped with a lemon butter sauce.",
-          "price": 8
+          "price": 8,
+          "photo": "./images/grilled_asparagus.jpg"
         }
       ]
     },
@@ -134,22 +151,26 @@
         {
           "name": "Chocolate Lava Cake",
           "description": "Warm chocolate cake with a gooey center, served with vanilla ice cream.",
-          "price": 8
+          "price": 8,
+          "photo": "./images/chocolate_lava_cake.jpg"
         },
         {
           "name": "Berry Tart",
           "description": "A buttery tart crust filled with vanilla custard and topped with fresh berries.",
-          "price": 6
+          "price": 6,
+          "photo": "./images/berry_tart.jpg"
         },
         {
           "name": "Matcha Green Tea Ice Cream",
           "description": "Creamy ice cream with a rich matcha flavor, served in a waffle cone.",
-          "price": 4
+          "price": 4,
+          "photo": "./images/matcha_green_tea_ice_cream.jpg"
         },
         {
           "name": "Macarons Assortment",
           "description": "A selection of colorful macarons in various flavors, including raspberry, pistachio, and chocolate.",
-          "price": 5
+          "price": 5,
+          "photo": "./images/macarons_assortment.jpg"
         }
       ]
     }

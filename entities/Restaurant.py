@@ -19,3 +19,13 @@ class Restaurant(pydantic.BaseModel):
             "menu": [dish.to_dict() for dish in self.menu]
         }
 
+    @classmethod
+    def from_dict(cls, data) -> 'Restaurant':
+        menu = [Dish.from_dict(dish_data) for dish_data in data.get('menu', [])]
+        return cls(
+            name=data['name'],
+            description=data['description'],
+            category=data['category'],
+            user_id=data['user_id'],
+            menu=menu
+        )

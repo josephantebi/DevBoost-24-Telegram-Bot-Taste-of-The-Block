@@ -6,6 +6,7 @@ from telebot import types
 from shared.shared_resource import shared_resource
 from service import restaurant_srevice, load_demo_restaurants
 from db_cart import CartsDB
+from utilities.picture import send_pic
 
 logging.basicConfig(
     format="[%(levelname)s %(asctime)s %(module)s:%(lineno)d] %(message)s",
@@ -72,7 +73,6 @@ def show_restaurants(message):
         bot.send_message(message.chat.id, restaurant_info, reply_markup=keyboard)
 
 
-
 @bot.callback_query_handler(func=lambda call: call.data.startswith("menu_"))
 def show_menu(call):
     user_id = int(call.data.split("_")[1])
@@ -92,6 +92,7 @@ def show_menu(call):
 
         for dish in restaurant['menu']:
             keyboard = types.InlineKeyboardMarkup()
+            send_pic(call.message, dish['photo'])
             dish_info = f"Dish name: {dish['name']}\n\n" \
                         f"{dish['description']}\n\n" \
                         f"Price: {dish['price']}"
@@ -99,7 +100,7 @@ def show_menu(call):
                 text="ADD TO CART",
                 callback_data=f"add_to_cart_{user_id}_{dish['name']}"
             )
-            keyboard.add(menu_button)
+            keyboard.row(menu_button)
             bot.send_message(call.message.chat.id, dish_info, reply_markup=keyboard)
     else:
         bot.send_message(call.message.chat.id, "No dishes available for this restaurant.")

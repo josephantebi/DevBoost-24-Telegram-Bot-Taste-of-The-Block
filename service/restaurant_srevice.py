@@ -2,6 +2,7 @@ import logging
 
 from telebot import types
 
+from entities.Restaurant import Restaurant
 from shared.shared_resource import shared_resource
 
 logging.basicConfig(
@@ -37,7 +38,7 @@ def process_restaurant_category_step(message, restaurant):
     logger.info(f"=Inserting restaurant category: {message.text} #{message.chat.id}/{message.from_user.username!r}")
     restaurant['category'] = message.text
     chat_id = message.chat.id
-    res = restaurant_db.add(restaurant)
+    res = restaurant_db.add(Restaurant.from_dict(restaurant))
     logger.info(f"=Done inserting restaurant {restaurant['name']} #{message.chat.id}/{message.from_user.username!r}")
     bot.send_message(chat_id, f'Creating {res["name"]} done 😁')
 
