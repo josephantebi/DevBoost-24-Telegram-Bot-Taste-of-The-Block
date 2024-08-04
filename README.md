@@ -1,9 +1,8 @@
 # 🚧 YOUR BOT NAME HERE
 
 ## The Team
-- 🚧 Participant 1 Name
-- 🚧 Participant 2 Name
-- 🚧 Participant 3 Name
+- 🚧 Joseph (sefi) Antebi
+- 🚧 Omar Hmdea
 
 ## About this bot
 
