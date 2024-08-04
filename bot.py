@@ -7,6 +7,7 @@ from shared.shared_resource import shared_resource
 from service import restaurant_srevice, load_demo_restaurants
 from db_cart import CartsDB
 from utilities.picture import send_pic
+from utilities.generate import generate_from_json
 
 logging.basicConfig(
     format="[%(levelname)s %(asctime)s %(module)s:%(lineno)d] %(message)s",
@@ -46,8 +47,21 @@ These commands will help you:
 
 @bot.message_handler(commands=['load_demo'])
 def load_demo(message):
-    load_demo_restaurants.load_demo()
-    bot.send_message(message.chat.id, "Demo data loaded successfully.")
+    taste_of_the_block = generate_from_json("restaurants.json")
+    existing_restaurants = list(restaurant_db.find_all())
+    existing_ids = {res['user_id'] for res in existing_restaurants}
+
+    new_restaurants = [
+        res for res in taste_of_the_block.restaurants
+        if res.user_id not in existing_ids
+    ]
+
+    if new_restaurants:
+        for res in new_restaurants:
+            restaurant_db.add(res)
+        bot.send_message(message.chat.id, "Demo data loaded successfully.")
+    else:
+        bot.send_message(message.chat.id, "Demo data already exists in the database.")
 
 
 @bot.message_handler(commands=['show_restaurants'])
@@ -265,7 +279,6 @@ def show_cart_with_user_id(user_id):
 def create_restaurant(message):
     logger.info(f"= Creating restaurant: #{message.chat.id}/{message.from_user.username!r}")
     msg = bot.send_message(message.chat.id, "Please choose a name for your restaurant.")
-    print(msg)
     bot.register_next_step_handler(msg, restaurant_srevice.process_create_restaurant, msg.message_id)
 
 
@@ -292,7 +305,6 @@ def remove_restaurant(message):
 
 @bot.callback_query_handler(func=lambda call: True)
 def handle_option(call):
-    print(edit_restaurant)
     if call.data == "edit_restaurant_name":
         restaurant_srevice.handle_edit_restaurant_name(message=call.message)
     elif call.data == "edit_restaurant_des":

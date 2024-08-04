@@ -4,7 +4,7 @@
       "name": "The Garden Bistro",
       "description": "A charming eatery nestled in a lush urban garden, offering fresh and organic dishes. The bistro focuses on farm-to-table dining, with an emphasis on seasonal ingredients.",
       "category": "Organic/Vegetarian",
-      "user_id": 101,
+      "user_id": 100000001,
       "menu": [
         {
           "name": "Harvest Salad",
@@ -24,7 +24,7 @@
       "name": "Oceanic Delights",
       "description": "A coastal-themed seafood restaurant with a laid-back atmosphere. Known for its fresh catch and creative seafood dishes.",
       "category": "Seafood",
-      "user_id": 102,
+      "user_id": 100000002,
       "menu": [
         {
           "name": "Seaside Paella",
@@ -44,13 +44,13 @@
       "name": "The Spice Route",
       "description": "An exotic restaurant offering a fusion of flavors from across Asia. The menu features a mix of Indian, Thai, and Indonesian dishes.",
       "category": "Asian Fusion",
-      "user_id": 103,
+      "user_id": 100000003,
       "menu": [
         {
           "name": "Mango Chicken Curry",
           "description": "Tender chicken pieces in a creamy mango and coconut curry sauce, served with basmati rice.",
           "price": 15,
-          "photo": "./images/mango_chicken_curry.jpeg"
+          "photo": "./images/mango_chicken_curry.jpg"
         },
         {
           "name": "Pad Thai",
