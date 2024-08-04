@@ -1,24 +1,34 @@
-# 🚧 YOUR BOT NAME HERE
+# 🍔🍕🥙🥗 Taste of The Block
 
 ## The Team
-- 🚧 Joseph (sefi) Antebi
-- 🚧 Omar Hmdea
+- 🧑‍💻 Joseph (sefi) Antebi
+- 🧑‍💻 Omar Hmdea
 
-## About this bot
+## About Taste of The Block bot
 
-🚧 ENTER DESCRIPTION HERE
+Taste of The Block is a community-driven Telegram bot designed to empower neighborhood residents to sell home-cooked meals. Users can register their own restaurants, list dishes, and manage orders directly through the bot. Customers can explore local options, add items to their cart, and place orders seamlessly. This innovative platform bridges the gap between home chefs and food lovers, fostering a vibrant local food ecosystem.
 
-🚧 YOU CAN ADD A t.me LINK TO THE BOT HERE
+Key Features:
 
-🚧 ADD SCREENSHOTS/GIFS/SCREENCAST HERE (REFER TO MARKDOWN'S SYNTAX FOR HELP ON DISPLAYING IMAGES)
+- Order & Delivery Integration: Streamlined process for placing orders and coordinating deliveries.
+- Custom Dish Requests: Allows customers to request personalized dishes.
+- Photo Gallery & Menus: Visual representation of dishes and menus.
+- Multilingual Support: Accessible to a diverse community by supporting multiple languages.
+- User Reviews & Ratings: Customers can leave feedback and rate their experiences.
+- Free - No fee: Completely free to use for both vendors and customers.
+- A connection between people: Promotes community interaction and connections through food.
+- Group Ordering: Facilitates group orders, making it easy to coordinate meals for gatherings.
 
-🚧 ADD ANY OTHER NOTES REGARDING THE BOT
+  
+📱 LINK TO THE BOT: https://t.me/Taste_Of_The_Block_bot
+
+🎥 Taste of The Block presentation: https://gamma.app/docs/Taste-of-The-Block-kkm9gp8xsvaob16
  
 ## Instructions for Developers 
 ### Prerequisites
 - Python 3.11
 - Poetry
-- 🚧 ADD ANY OTHER PREREQUISITE HERE (MONGODB?)
+- MongoDB
 
 ### Setup
 - git clone this repository 
